@@ -1,6 +1,3 @@
-"""
-This module takes care of starting the API Server, Loading the DB and Adding the endpoints
-"""
 import os
 from flask import Flask, request, jsonify, url_for
 from flask_migrate import Migrate
@@ -8,7 +5,7 @@ from flask_swagger import swagger
 from flask_cors import CORS
 from utils import APIException, generate_sitemap
 from admin import setup_admin
-from models import db, User
+from models import db, User, People, Planets, Favorites
 #from models import Person
 
 app = Flask(__name__)
@@ -44,6 +41,35 @@ def handle_hello():
     }
 
     return jsonify(response_body), 200
+
+@app.route('/people', methods=['GET'])
+def get_people():
+    people=People.query.all()
+    people_ser=[person.serialize() for person in people]
+    return jsonify(people_ser), 200
+
+@app.route('/people/<int:people_id>', methods=['GET'])
+def get_person(people_id):
+    person=People.query.get(people_id)
+    return jsonify(person.serialize()), 200
+
+@app.route('/planets', methods=['GET'])
+def get_planets():
+    planets=Planets.query.all()
+    planets_ser=[planet.serialize() for planet in planets]
+    return jsonify(planets_ser), 200
+
+@app.route('/favoritess', methods=['GET'])
+def get_favorites():
+    favorites(filter user_id=user_id)
+    planets=Planets.query.all()
+    planets_ser=[planet.serialize() for planet in planets]
+    return jsonify(planets_ser), 200
+
+@app.route('/planets/<int:planet_id>', methods=['GET'])
+def get_planet(planet_id):
+    planet=Planets.query.get(planet_id)
+    return jsonify(planet.serialize()), 200
 
 # this only runs if `$ python src/app.py` is executed
 if __name__ == '__main__':
